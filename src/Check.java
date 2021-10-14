@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
+import static javax.swing.JScrollPane.*;
+
 public class Check extends JFrame {
 
     private JPanel newDic;
@@ -12,6 +14,7 @@ public class Check extends JFrame {
     private JButton button1;
     private JList list1;
     private JTextArea textArea1;
+    private JPanel jp;
     private static DefaultListModel listDictionary;
     //private static DictionaryManagement dictionaryManagement;
 
@@ -25,21 +28,33 @@ public class Check extends JFrame {
 
         DictionaryManagement dict=new DictionaryManagement();
         dict.insertFromFile();
+        //JScrollPane scroll=new JScrollPane(list1, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        list1.addListSelectionListener(new ListSelectionListener() {
+         list1.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int number=list1.getSelectedIndex();
-//                String a="22111";
-//                System.out.println(a);
                 if(number>=0){
                     textArea1.setText(dict.dictionary.getList(number).getWord_explain());
-                    //System.out.println(k);
                 }
             }
         });
 
-    }
+         button1.addActionListener(new ActionListener() {
+             @Override
+             public void actionPerformed(ActionEvent e) {
+                 String searched=textField1.getText();
+
+                 for(int i=0;i<dict.dictionary.getSize();i++){
+                     if(searched.equals(dict.dictionary.getList(i).getWord_target())){
+                         textArea1.setText(dict.dictionary.getList(i).getWord_explain());
+                         System.out.println("find");
+                         break;
+                     }
+                 }
+             }
+         });
+     }
 
     public static void displaySce() throws IOException {
         DictionaryManagement dic=new DictionaryManagement();

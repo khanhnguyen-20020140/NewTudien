@@ -24,7 +24,7 @@ public class DictionaryManagement {
     }
 
     void insertFromFile() throws IOException {
-        String  url="dic.txt";
+        String  url="newdic.txt";
         File file = new File(url);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String engWord="";
