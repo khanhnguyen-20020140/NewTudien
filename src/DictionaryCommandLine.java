@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 public class DictionaryCommandLine {
     private DictionaryManagement dictionaryManagement;
+    private SQLite sqLite;
     Dictionary dictionary;
     DictionaryCommandLine(){
         dictionaryManagement=new DictionaryManagement();
@@ -40,8 +41,8 @@ public class DictionaryCommandLine {
         Scanner sc=new Scanner(System.in);
         switch (option){
             case -1:{
-                dictionaryManagement.insertFromFile();
-
+                //dictionaryManagement.insertFromFile();
+                dictionaryManagement.selectAll();
                 break;
             }
             case -2:{

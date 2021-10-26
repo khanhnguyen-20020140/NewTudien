@@ -15,6 +15,8 @@ public class Check extends JFrame {
     private JList list1;
     private JTextArea textArea1;
     private JPanel jp;
+    private JEditorPane editorPane1;
+    private JTextField textField2;
     private static DefaultListModel listDictionary;
     //private static DictionaryManagement dictionaryManagement;
 
@@ -27,41 +29,65 @@ public class Check extends JFrame {
         list1.setModel(listDictionary);
 
         DictionaryManagement dict=new DictionaryManagement();
-        dict.insertFromFile();
-        //JScrollPane scroll=new JScrollPane(list1, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        //dict.insertFromFile();
+         dict.selectAll();
+
 
          list1.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int number=list1.getSelectedIndex();
                 if(number>=0){
-                    textArea1.setText(dict.dictionary.getList(number).getWord_explain());
+                    editorPane1.setContentType("text/html");
+                    editorPane1.setText(dict.dictionary.getList(number).getWord_explain());
                 }
             }
         });
 
+//         button1.addActionListener(new ActionListener() {
+//             @Override
+//             public void actionPerformed(ActionEvent e) {
+//                 String searched=textField1.getText();
+//                 long start = System.currentTimeMillis();
+//                 for(int i=0;i<dict.dictionary.getSize();i++){
+//                     if(searched.equals(dict.dictionary.getList(i).getWord_target())){
+//                         editorPane1.setContentType("text/html");
+//                         editorPane1.setText(dict.dictionary.getList(i).getWord_explain());
+//                         break;
+//                     }
+//                 }
+//                 long end = System.currentTimeMillis();
+//                 System.out.println("Thoi gian chay la: " + (end-start));
+//             }
+//         });
+//
+//         button1.addActionListener(new ActionListener() {
+//             @Override
+//             public void actionPerformed(ActionEvent e) {
+//                 String newWord=textField1.getText();
+//                 String Explain=textField2.getText();
+//                 dict.insert(newWord,Explain);
+//                 System.out.println("add success");
+//             }
+//         });
+
+
          button1.addActionListener(new ActionListener() {
              @Override
              public void actionPerformed(ActionEvent e) {
-                 String searched=textField1.getText();
-
-                 for(int i=0;i<dict.dictionary.getSize();i++){
-                     if(searched.equals(dict.dictionary.getList(i).getWord_target())){
-                         textArea1.setText(dict.dictionary.getList(i).getWord_explain());
-                         System.out.println("find");
-                         break;
-                     }
-                 }
+                 String deleteWord=textField1.getText();
+                 dict.delete(deleteWord);
              }
          });
      }
 
     public static void displaySce() throws IOException {
         DictionaryManagement dic=new DictionaryManagement();
-        dic.insertFromFile();
+        //dic.insertFromFile();
+        dic.selectAll();
         for(int i=0;i<dic.dictionary.getSize();i++) {
             listDictionary.addElement(dic.dictionary.getList(i).getWord_target());
-        }
+        }//in vao list1
     }
 
     public static void main(String[] args) throws IOException {

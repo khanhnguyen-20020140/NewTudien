@@ -1,8 +1,10 @@
 import java.io.*;
+import java.sql.*;
 import java.util.Scanner;
 
 public class DictionaryManagement {
     Dictionary dictionary;
+
     final String nameFile="dictionary.txt";
     DictionaryManagement(){
         dictionary= new Dictionary();
@@ -23,45 +25,116 @@ public class DictionaryManagement {
         }
     }
 
-    void insertFromFile() throws IOException {
-        String  url="newdic.txt";
-        File file = new File(url);
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String engWord="";
-        String meaningWord="";
-        int check=0;
+//    void insertFromFile() throws IOException {
+//        String  url="newdic.txt";
+//        File file = new File(url);
+//        BufferedReader reader = new BufferedReader(new FileReader(file));
+//        String engWord="";
+//        String meaningWord="";
+//        int check=0;
+//        try {
+//            String line= reader.readLine();
+//            while(line!=null){
+//                if(line.contains("@")==true){
+//                    Word word=new Word(engWord, meaningWord);
+//                    dictionary.setList(word);
+//                    engWord="";
+//                    meaningWord="";
+//                    String[] testArray = line.split(" /");
+//                    engWord=testArray[0];
+//                    engWord=engWord.replace("@","");
+//                    meaningWord+="/"+testArray[1];
+//
+//                }
+//                else{
+//                    meaningWord+=line+"\n";
+//                    //System.out.println(meaningWord);
+//                }
+//                //System.out.println(line);
+//                line= reader.readLine();
+//            }
+//
+//        } finally {
+//            try {
+//                reader.close();
+//                // file.close();
+//            } catch (IOException ex) {
+////                Logger.getLogger(ReadFileWithBufferedReader.class.getName())
+////                        .log(Level.SEVERE, null, ex);
+//            }
+//        }
+//    }
+private Connection connect() {
+    // SQLite connection string
+    String url = "jdbc:sqlite:C://Users/Dell/Downloads/dict_hh.db";
+    Connection conn = null;
+    try {
+        conn = DriverManager.getConnection(url);
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    }
+    return conn;
+}
+
+    public void selectAll(){
+        String sql = "SELECT * FROM av";
+
         try {
-            String line= reader.readLine();
-            while(line!=null){
-                if(line.contains("@")==true){
-                    Word word=new Word(engWord, meaningWord);
-                    dictionary.setList(word);
-                    engWord="";
-                    meaningWord="";
-                    String[] testArray = line.split(" /");
-                    engWord=testArray[0];
-                    engWord=engWord.replace("@","");
-                    meaningWord+="/"+testArray[1];
+            Connection conn = this.connect();
+            Statement stmt  = conn.createStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+            String engWord="";
+            String meaningWord="";
+            // loop through the result set
+            while (rs.next()) {
+//                System.out.println(rs.getString("word") +  "\t" +
+//                        rs.getString("description")) ;
+                engWord=rs.getString("word");
 
-                }
-                else{
-                    meaningWord+=line+"\n";
-                    //System.out.println(meaningWord);
-                }
-                //System.out.println(line);
-                line= reader.readLine();
+                meaningWord= rs.getString("html");
+                Word word=new Word(engWord, meaningWord);
+                dictionary.setList(word);
             }
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
 
-        } finally {
-            try {
-                reader.close();
-                // file.close();
-            } catch (IOException ex) {
-//                Logger.getLogger(ReadFileWithBufferedReader.class.getName())
-//                        .log(Level.SEVERE, null, ex);
-            }
+    }
+
+
+    public void insert(String newWord, String explain) {
+        String sql = "INSERT INTO av(word, html) VALUES(?,?);";
+
+        try{
+            Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, newWord);
+            pstmt.setString(2, explain);
+            pstmt.executeUpdate();
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    public void delete(String deteleWord){
+        Connection conn = this.connect();
+        PreparedStatement ps = null;
+        try{
+            String sql = "delete from av where word = ? ";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1,deteleWord);
+            ps.execute();
+            System.out.println("Success");
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
+
+
 
     void dictionaryLookUp(String engWord){
         for(int i=0;i< dictionary.getSize();++i){
